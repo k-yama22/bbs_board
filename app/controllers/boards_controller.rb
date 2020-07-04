@@ -24,14 +24,23 @@ class BoardsController < ApplicationController
   end
 
   def show
+    @comment = Comment.new(board_id: @board.id)
   end
 
   def edit
   end
 
   def update
-    @board .update(board_params)
-    redirect_to @board
+    @board = Board.find(params[:id])
+    if @board.update(board_params)
+      flash[:notice] = "「#{@board.title}」の掲示板を編集しました"
+      redirect_to @board
+    else
+      redirect_to edit_board_path, flash: {
+        board: @board,
+        error_messages: @board.errors.full_messages
+      }
+    end
   end
 
   def destroy
